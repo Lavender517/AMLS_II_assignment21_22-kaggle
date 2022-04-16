@@ -1,0 +1,104 @@
+Using hyperparameters as: Namespace(sen_len=30, fixed_embedding=True, embedding_dim=300, batch_size=64, num_workers=16, n_epochs=40, lr=0.001, weight_decay=1e-05, dropout=0.5, device=5, early_stop_TH=10, model='CNN')
+Loading training data ...
+Get embedding ...
+loading word2vec model ...
+
+total words: 3503
+Using TextCNN Model
+start training, parameter total:4263601, trainable:4263601
+
+Epoch1: 96/96 
+Train | Loss:0.90628 Acc: 56.689
+Valid | Loss:0.64182 Acc: 69.076 
+-----------------------------------------------
+
+Epoch2: 96/96 
+Train | Loss:0.64463 Acc: 62.826
+Valid | Loss:0.61893 Acc: 70.638 
+-----------------------------------------------
+
+Epoch3: 96/96 
+Train | Loss:0.60159 Acc: 68.050
+Valid | Loss:0.59926 Acc: 66.602 
+-----------------------------------------------
+
+Epoch4: 96/96 
+Train | Loss:0.58101 Acc: 69.482
+Valid | Loss:0.54375 Acc: 73.438 
+-----------------------------------------------
+
+Epoch5: 96/96 
+Train | Loss:0.51833 Acc: 74.219
+Valid | Loss:0.51141 Acc: 76.497 
+-----------------------------------------------
+
+Epoch6: 96/96 
+Train | Loss:0.50481 Acc: 75.033
+Valid | Loss:0.50703 Acc: 77.279 
+-----------------------------------------------
+
+Epoch7: 96/96 
+Train | Loss:0.46252 Acc: 78.060
+Valid | Loss:0.49403 Acc: 77.083 
+-----------------------------------------------
+
+Epoch8: 96/96 
+Train | Loss:0.44329 Acc: 79.183
+Valid | Loss:0.47938 Acc: 78.125 
+-----------------------------------------------
+
+Epoch9: 96/96 
+Train | Loss:0.42180 Acc: 80.078
+Valid | Loss:0.47570 Acc: 78.711 
+-----------------------------------------------
+
+Epoch10: 96/96 
+Train | Loss:0.41098 Acc: 81.380
+Valid | Loss:0.48347 Acc: 78.581 
+-----------------------------------------------
+
+Epoch11: 96/96 
+Train | Loss:0.38659 Acc: 82.747
+Valid | Loss:0.49317 Acc: 76.758 
+-----------------------------------------------
+
+Epoch12: 96/96 
+Train | Loss:0.39189 Acc: 81.787
+Valid | Loss:0.49705 Acc: 78.255 
+-----------------------------------------------
+
+Epoch13: 96/96 
+Train | Loss:0.37234 Acc: 83.626
+Valid | Loss:0.49808 Acc: 78.646 
+-----------------------------------------------
+
+Epoch14: 96/96 
+Train | Loss:0.35586 Acc: 83.691
+Valid | Loss:0.60828 Acc: 67.643 
+-----------------------------------------------
+
+Epoch15: 96/96 
+Train | Loss:0.36445 Acc: 84.033
+Valid | Loss:0.51530 Acc: 75.651 
+-----------------------------------------------
+
+Epoch16: 96/96 
+Train | Loss:0.34098 Acc: 84.912
+Valid | Loss:0.49439 Acc: 77.279 
+-----------------------------------------------
+
+Epoch17: 96/96 
+Train | Loss:0.32474 Acc: 85.710
+Valid | Loss:0.51424 Acc: 76.823 
+-----------------------------------------------
+
+Epoch18: 96/96 
+Train | Loss:0.31821 Acc: 86.279
+Valid | Loss:0.54158 Acc: 77.409 
+-----------------------------------------------
+
+Epoch19: 96/96 
+Train | Loss:0.32357 Acc: 85.905
+Valid | Loss:0.53343 Acc: 77.083 
+EARLY STOP SATISFIES, STOP TRAINING
+Training process finished!
