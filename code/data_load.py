@@ -45,6 +45,9 @@ def filter_text(text):
     return text
 
 def load_data():
+    '''
+    Load origin data, then return pre-processed data
+    '''
     train_org = pd.read_csv('./Datasets/train.csv')
     test_org = pd.read_csv('./Datasets/test.csv')
     train_org['text'] = train_org['text'].apply(filter_text)
@@ -58,7 +61,7 @@ def load_data():
 
 class TwitterDataset(Dataset):
     """
-    Expected data shape like:(data_num, data_len)
+    Expected data shape like: (data_num, data_len)
     Data can be a list of numpy array or a list of lists
     input data shape : (data_num, seq_len, feature_dim)
     

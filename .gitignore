@@ -1,2 +1,2 @@
 # Ignore BERT Model 
-models/BERT
+models/BERT/*

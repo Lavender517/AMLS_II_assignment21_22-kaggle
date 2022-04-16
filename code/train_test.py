@@ -18,7 +18,7 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
     model.train() # Let optimizer update the parameters
     t_batch = len(train_loader) 
     v_batch = len(valid_loader) 
-    log_writer = SummaryWriter(dir) # Write log fil
+    log_writer = SummaryWriter(dir) # Write log file
     best_acc, batch_num, continue_bigger_num = 0, 0, 0
 
     for epoch in range(n_epoch):
@@ -26,9 +26,9 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
 
         for i, (inputs, labels) in enumerate(train_loader):
             batch_num += 1
-            inputs = inputs.to(device, dtype=torch.long) # device为"cuda"，将inputs变成torch.cuda.LongTensor
-            labels = labels.to(device, dtype=torch.float) # device為"cuda"，将labels变成torch.cuda.FloatTensor，因为等等要放入criterion，所以类型要是float
-            optimizer.zero_grad() # 由于loss.backward()的gradient会累加，所以每次做完一个batch后需要调零
+            inputs = inputs.to(device, dtype=torch.long) # transform inputs to torch.cuda.LongTensor
+            labels = labels.to(device, dtype=torch.float) # transform inputs to torch.cuda.FloatTensor
+            optimizer.zero_grad() # Reset gradient to zero
             if modeltype == 'BERT':
                 output = model(inputs, token_type_ids=None, attention_mask=inputs>0, labels=labels)
                 outputs = output.logits.squeeze()
@@ -38,17 +38,14 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
                 # tmp_acc = flat_accuracy(logits, labels)
 
             else:
-                outputs = model(inputs) # 將input餵給模型
-                outputs = outputs.squeeze() # 去掉最外面的dimension，好让outputs可以放入criterion()
-                if i == 0:
-                    print('inputs:', inputs)
-                    print('outputs:', outputs)
-                loss = criterion(outputs, labels) # 计算此时模型的training loss
-            loss.backward() # 算loss的gradient
-            optimizer.step() # 更新训练模型的參數
+                outputs = model(inputs)
+                outputs = outputs.squeeze() # deleter the outmost dimension
+                loss = criterion(outputs, labels)
+            loss.backward() # Get the loss gradient
+            optimizer.step() # Update model training parameters
             if modeltype == 'BERT':
                 scheduler.step()
-            tmp_acc = evaluation(outputs, labels) / batch_size # 计算此时模型的training accuracy
+            tmp_acc = evaluation(outputs, labels) / batch_size
             total_acc += tmp_acc
             total_loss += loss.item()
             log_writer.add_scalar('Loss/Train', float(loss), batch_num) # Draw in Tensorboard
@@ -58,7 +55,7 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
         print('\nEpoch{}: {}/{} \nTrain | Loss:{:.5f} Acc: {:.3f}'.format(epoch+1, i+1, t_batch, total_loss/t_batch, total_acc/t_batch*100))
 
         # Validation
-        model.eval() # 将model的模式设为eval，这样model的参数就会固定住
+        model.eval() # Fix the model parameters
         with torch.no_grad():
             total_loss, total_acc = 0, 0
             for i, (inputs, labels) in enumerate(valid_loader):
@@ -85,8 +82,12 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
             if total_acc > best_acc:
                 best_acc = total_acc
                 continue_bigger_num = 0
-                torch.save(model, "./models/" + modeltype + "/ckpt_" + str(round(total_acc/v_batch*100, 3)) + ".model")
-                print('saving model with acc {:.3f}'.format(total_acc/v_batch*100))
+                total_acc_new = total_acc/v_batch*100
+                if modeltype == 'LSTM' and total_acc_new > 78 or\
+                    modeltype == 'CNN' and total_acc_new > 79 or\
+                    modeltype == 'BERT' and total_acc_new > 81:
+                    torch.save(model, "./models/" + modeltype + "/ckpt_" + str(round(total_acc_new, 3)) + ".model")
+                    print('saving model with acc {:.3f}'.format(total_acc_new))
             else:
                 continue_bigger_num += 1
                 if continue_bigger_num == early_stop_num:
@@ -108,13 +109,13 @@ def testing(modeltype, test_loader, model, device):
             else:
                 outputs = model(inputs)
                 outputs = outputs.squeeze()
-            outputs[outputs>=0.5] = 1 # 大於等於0.5為負面
-            outputs[outputs<0.5] = 0 # 小於0.5為正面
+            outputs[outputs>=0.5] = 1 # More than 0.5 set to real
+            outputs[outputs<0.5] = 0 # Less than 0.5 set to fake
             ret_output += outputs.int().tolist()
     
     return ret_output
 
-def evaluation(outputs, labels): #定义自己的评价函数，用分类的准确率来评价
+def evaluation(outputs, labels):
     # outputs => probability (float)
     # labels => labels
     pred = torch.zeros_like(outputs)

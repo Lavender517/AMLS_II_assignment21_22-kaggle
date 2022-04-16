@@ -3,7 +3,7 @@ from torch import nn
 from gensim.models import Word2Vec
 
 class Preprocess():
-    def __init__(self, sentences, sen_len, w2v_path="./code/w2v.model"): #首先定义类的一些属性
+    def __init__(self, sentences, sen_len, w2v_path): # First define the property of some parameters
         self.w2v_path = w2v_path
         self.sentences = sentences
         self.sen_len = sen_len
@@ -46,7 +46,6 @@ class Preprocess():
             self.word2idx[word] = len(self.word2idx)
             self.idx2word.append(word)
             self.embedding_matrix.append(self.embedding[word])
-            # self.embedding_matrix.append(self.word2idx[word])
         print('')
         self.embedding_matrix = torch.tensor(self.embedding_matrix)
         # Add "" and "" into embeddings
@@ -57,9 +56,9 @@ class Preprocess():
 
     def pad_sequence(self, sentence):
         # Get uniform length
-        if len(sentence) > self.sen_len: # Truncate
+        if len(sentence) > self.sen_len:          # Truncate
             sentence = sentence[:self.sen_len]
-        else:                            # Add ""
+        else:                                     # Add ""
             pad_len = self.sen_len - len(sentence)
             for _ in range(pad_len):
                 sentence.append(self.word2idx[""])
@@ -89,25 +88,15 @@ class Preprocess():
 
 
 # Function to get token ids for a list of texts 
-def bert_tokenize_fn(text_list, tokenizer, seq_len):
-    # input_ids = tokenizer.encode(
-    #                     text_list,                      
-    #                     add_special_tokens = True,  # 添加special tokens， 也就是CLS和SEP
-    #                     max_length = seq_len,       # 设定最大文本长度
-    #                     padding = 'max_length',   # pad到最大的长度  
-    #                     return_tensors = 'pt',       # 返回的类型为pytorch tensor
-    #                     truncation = True
-    # )
-    # return input_ids
-    
+def bert_tokenize_fn(text_list, tokenizer, seq_len):   
     all_input_ids = []    
     for text in text_list:
         input_ids = tokenizer.encode(
                         text,                      
-                        add_special_tokens = True,  # 添加special tokens，也就是CLS和SEP
-                        max_length = seq_len,       # 设定最大文本长度
-                        padding = 'max_length',      # pad到最大的长度  
-                        return_tensors = 'pt',       # 返回的类型为pytorch tensor
+                        add_special_tokens = True,   # Add special tokens，including CLS and SEP
+                        max_length = seq_len,        # Limit the max sequence length
+                        padding = 'max_length',      # Padding to max length  
+                        return_tensors = 'pt',       # return type is pytorch tensor
                         truncation = True
                     )
         all_input_ids.append(input_ids)    

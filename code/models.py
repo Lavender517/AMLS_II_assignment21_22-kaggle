@@ -16,11 +16,11 @@ class LSTM_Net(nn.Module):
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.dropout = dropout
-        # self.lstm = nn.LSTM(embedding_dim, hidden_dim, num_layers=num_layers, batch_first=True)
+        # Using Bi-LSTM model
         self.lstm = nn.LSTM(embedding_dim, hidden_dim, num_layers=num_layers, bidirectional=True, batch_first=True)  
-        self.classifier = nn.Sequential( nn.Dropout(dropout),
-                                         nn.Linear(hidden_dim*2, 1),
-                                         nn.Sigmoid() )
+        self.classifier = nn.Sequential(nn.Dropout(dropout),
+                                        nn.Linear(hidden_dim*2, 1),
+                                        nn.Sigmoid())
 
         # Initialization
         for m in self.modules():
@@ -48,13 +48,16 @@ class TextCNN(nn.Module):
         self.embedding = nn.Embedding(embedding.size(0), embedding.size(1))
 
         self.constant_embedding = nn.Embedding(embedding.size(0), embedding.size(1))
-        self.dropout = nn.Dropout(dropout)
-        self.decoder = nn.Linear(sum(num_channels), 1)
-        # 最大时间汇聚层没有参数，因此可以共享此实例
+        self.classifier = nn.Sequential(nn.Dropout(dropout),
+                                        nn.Linear(sum(num_channels), 1),
+                                        nn.Sigmoid())
+        # self.dropout = nn.Dropout(dropout)
+        # self.decoder = nn.Linear(sum(num_channels), 1)
+        # self.sigmoid = nn.Sigmoid()
+        # The maximum time aggregation layer has no parameters, so this instance can be shared
         self.pool = nn.AdaptiveAvgPool1d(1)
         self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
-        # 创建多个一维卷积层
+        # Construct a multi-dimension convolutional layer
         self.convs = nn.ModuleList()
         for c, k in zip(num_channels, kernel_sizes):
             self.convs.append(nn.Conv1d(2 * embedding.size(1), c, k))
@@ -64,15 +67,14 @@ class TextCNN(nn.Module):
                 nn.init.xavier_uniform_(m.weight)
 
     def forward(self, inputs):
-        # 沿着向量维度将两个嵌入层连结起来，
-        # 每个嵌入层的输出形状都是（批量大小，词元数量，词元向量维度）连结起来
+        # Join the two embedding layers along the vector dimension,
+        # The output shape of each embedding layer is [batch_size, seq_len, embedding_dim] 连结起来
         embeddings = torch.cat((self.embedding(inputs), self.constant_embedding(inputs)), dim=2)
-        # 根据一维卷积层的输入格式，重新排列张量，以便通道作为第2维
-        embeddings = embeddings.permute(0, 2, 1)
-        # 每个一维卷积层在最大时间汇聚层合并后，获得的张量形状是（批量大小，通道数，1）
-        # 删除最后一个维度并沿通道维度连结
+        # According to the input format of the 1-dim convolution layer, the tensors are rearranged so that the channels are the second dimension
+        embeddings = embeddings.permute(0, 2, 1) # exchange dimensions, get tensor's shape as [batch_size, channel, 1]
         encoding = torch.cat([
             torch.squeeze(self.relu(self.pool(conv(embeddings))), dim=-1)
             for conv in self.convs], dim=1)
-        outputs = self.sigmoid(self.decoder(self.dropout(encoding)))
+        # outputs = self.sigmoid(self.decoder(self.dropout(encoding)))
+        outputs = self.classifier(encoding)
         return outputs

@@ -19,18 +19,18 @@ from code.train_test import training, testing
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--sen_len', type=int, default=30, help='The specified sentence length')
+parser.add_argument('--sen_len', type=int, default=40, help='The specified sentence length')
 parser.add_argument('--fixed_embedding', type=bool, default=True, help='If needed to fix embedding during training process')
-parser.add_argument('--embedding_dim', type=int, default=200, help='Embedded feature dimenstion')
+parser.add_argument('--embedding_dim', type=int, default=300, help='Embedded feature dimenstion')
 parser.add_argument('--batch_size', type=int, default=64, help='The data to be included in each epoch')
 parser.add_argument('--num_workers', type=int, default=16, help='How many subprocesses to use for data loading')
-parser.add_argument('--n_epochs', type=int, default=20, help='Training epochs = samples_num / batch_size')
-parser.add_argument('--lr', type=float, default=5e-6, help='Learning Rate')
-parser.add_argument('--weight_decay', type=float, default=5e-2, help='Regularization coefficient, usually use 5 times, for example: 1e-4/5e-4/1e-5/5e-5')
-parser.add_argument('--dropout', type=float, default=0.6, help='Dropout coefficient')
+parser.add_argument('--n_epochs', type=int, default=50, help='Training epochs = samples_num / batch_size')
+parser.add_argument('--lr', type=float, default=0.001, help='Learning Rate')
+parser.add_argument('--weight_decay', type=float, default=5e-6, help='Regularization coefficient, usually use 5 times, for example: 1e-4/5e-4/1e-5/5e-5')
+parser.add_argument('--dropout', type=float, default=0.5, help='Dropout coefficient')
 parser.add_argument('--device', type=int, default=5, help='The specified GPU number to be used')
-parser.add_argument('--early_stop_TH', type=int, default=6, help='The threshold value of the valid_loss continue_bigger_num in early stopping criterion')
-parser.add_argument('--model', type=str, default='BERT', help='The specifc deep learning model to be chosed')
+parser.add_argument('--early_stop_TH', type=int, default=10, help='The threshold value of the valid_loss continue_bigger_num in early stopping criterion')
+parser.add_argument('--model', type=str, default='LSTM', help='The specifc deep learning model to be chosed')
 args = parser.parse_args()
 
 seed = 42
@@ -43,8 +43,7 @@ torch.backends.cudnn.deterministic = True
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if device == torch.device('cuda'):
     device = args.device
-code_path = './code'
-w2v_path = os.path.join(code_path, 'w2v_all_' + str(args.embedding_dim) + '.model')
+w2v_path = os.path.join('models', 'w2v_all_' + str(args.embedding_dim) + '.model')
 
 
 def train():
@@ -76,7 +75,7 @@ def train():
             print("Using Bi-LSTM Model")
 
         elif args.model == "CNN":
-            train_model = TextCNN(embedding, kernel_sizes=[3, 4, 5], dropout=args.dropout, num_channels=[200, 200, 200])
+            train_model = TextCNN(embedding, kernel_sizes=[3, 4, 5], dropout=args.dropout, num_channels=[args.embedding_dim, args.embedding_dim, args.embedding_dim])
             print("Using TextCNN Model")
         
         else:

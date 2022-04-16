@@ -22,4 +22,4 @@ if __name__ == '__main__':
     model = train_word2vec(train_x + test_x, vector_size)
     
     print("Saving model with vector size =", vector_size)
-    model.save('w2v_all_' + str(vector_size) + '.model') # Save pre-trained models
+    model.save(os.path.join('../models', 'w2v_all_' + str(vector_size) + '.model')) # Save pre-trained models
