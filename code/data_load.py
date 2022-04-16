@@ -45,8 +45,8 @@ def filter_text(text):
     return text
 
 def load_data():
-    train_org = pd.read_csv('../Datasets/train.csv')
-    test_org = pd.read_csv('../Datasets/test.csv')
+    train_org = pd.read_csv('./Datasets/train.csv')
+    test_org = pd.read_csv('./Datasets/test.csv')
     train_org['text'] = train_org['text'].apply(filter_text)
     train_org = train_org[train_org['text'] != '']
     train_x = list(train_org['text'].values)

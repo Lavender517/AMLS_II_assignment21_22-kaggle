@@ -24,12 +24,12 @@ parser.add_argument('--embedding_dim', type=int, default=200, help='Embedded fea
 
 parser.add_argument('--batch_size', type=int, default=64, help='The data to be included in each epoch')
 parser.add_argument('--num_workers', type=int, default=16, help='How many subprocesses to use for data loading')
-parser.add_argument('--n_epochs', type=int, default=40, help='Training epochs = samples_num / batch_size')
-parser.add_argument('--lr', type=float, default=2e-5, help='Learning Rate')
-parser.add_argument('--weight_decay', type=float, default=0.05, help='Regularization coefficient, usually use 5 times, for example: 1e-4/5e-4/1e-5/5e-5')
-parser.add_argument('--dropout', type=float, default=0.5, help='Dropout coefficient')
+parser.add_argument('--n_epochs', type=int, default=20, help='Training epochs = samples_num / batch_size')
+parser.add_argument('--lr', type=float, default=5e-6, help='Learning Rate')
+parser.add_argument('--weight_decay', type=float, default=1e-2, help='Regularization coefficient, usually use 5 times, for example: 1e-4/5e-4/1e-5/5e-5')
+parser.add_argument('--dropout', type=float, default=0.6, help='Dropout coefficient')
 parser.add_argument('--device', type=int, default=5, help='The specified GPU number to be used')
-parser.add_argument('--early_stop_TH', type=int, default=10, help='The theshold value of the valid_loss continue_bigger_num in early stopping criterion')
+parser.add_argument('--early_stop_TH', type=int, default=10, help='The threshold value of the valid_loss continue_bigger_num in early stopping criterion')
 parser.add_argument('--model', type=str, default='BERT', help='The specifc deep learning model to be chosed')
 args = parser.parse_args()
 
@@ -100,19 +100,18 @@ def train():
     total_steps = len(train_loader) * args.n_epochs
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=0, num_training_steps=total_steps)
 
-    training(args.model, args.batch_size, args.n_epochs, criterion, optimizer, scheduler, train_loader, val_loader, train_model, device)
+    training(args.model, args.batch_size, args.n_epochs, criterion, optimizer, scheduler, train_loader, val_loader, train_model, device, args.early_stop_TH)
     print("Training process finished!")
 
 def test():
     print("Loading testing data ...")
     _, _, test_x = load_data()
     
+    # Preprocessing on Testing Dataset
     if args.model == 'BERT':
-        # Preprocessing on Testing Dataset
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
         test_x = bert_tokenize_fn(test_x, tokenizer, args.sen_len) # input_ids
     else:
-        # Preprocessing on Testing Dataset
         test_pp = Preprocess(test_x, args.sen_len, w2v_path=w2v_path)
         test_x = test_pp.sentence_word2idx()
 
@@ -120,7 +119,7 @@ def test():
     test_loader = torch.utils.data.DataLoader(dataset = test_dataset, batch_size = args.batch_size, shuffle = False, num_workers = args.num_workers)
 
     print('Load model ...')
-    saved_model = torch.load('ckpt.model')
+    saved_model = torch.load('./models/ckpt_81.38020833333334.model')
     outputs = testing(args.model, test_loader, saved_model, device)
 
     # Save to csv
