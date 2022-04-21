@@ -50,9 +50,9 @@ def training(modeltype, batch_size, n_epoch, criterion, optimizer, scheduler, tr
             total_loss += loss.item()
             log_writer.add_scalar('Loss/Train', float(loss), batch_num) # Draw in Tensorboard
             log_writer.add_scalar('Acc/Train', float(tmp_acc*100), batch_num) # Draw in Tensorboard
-            # print('[ Epoch{}: {}/{} ] loss:{:.3f} acc:{:.3f} '.format(epoch+1, i+1, t_batch, loss.item(), tmp_acc*100), end='\r')
-        # print('\nTrain | Loss:{:.5f} Acc: {:.3f}'.format(total_loss/t_batch, total_acc/t_batch*100))
-        print('\nEpoch{}: {}/{} \nTrain | Loss:{:.5f} Acc: {:.3f}'.format(epoch+1, i+1, t_batch, total_loss/t_batch, total_acc/t_batch*100))
+            print('[ Epoch{}: {}/{} ] loss:{:.3f} acc:{:.3f} '.format(epoch+1, i+1, t_batch, loss.item(), tmp_acc*100), end='\r')
+        print('\nTrain | Loss:{:.5f} Acc: {:.3f}'.format(total_loss/t_batch, total_acc/t_batch*100))
+        # print('\nEpoch{}: {}/{} \nTrain | Loss:{:.5f} Acc: {:.3f}'.format(epoch+1, i+1, t_batch, total_loss/t_batch, total_acc/t_batch*100))
 
         # Validation
         model.eval() # Fix the model parameters
@@ -124,12 +124,13 @@ def evaluation(outputs, labels):
     correct = torch.sum(torch.eq(pred, labels)).item()
     return correct
 
-# def flat_accuracy(preds, labels):
-    
-#     """A function for calculating accuracy scores"""
-    
-#     pred_flat = np.argmax(preds, axis=1).flatten()
-#     labels_flat = labels.flatten()
-#     return accuracy_score(labels_flat, pred_flat)
-#     # print(pred_flat.shape, labels_flat.shape)
-#     # return np.sum(pred_flat == labels_flat)
+# def evaluation(outputs, labels):
+#     # outputs => probability (float)
+#     # labels => labels
+#     outputs_np = outputs.detach().cpu().numpy()
+#     label_np = labels.detach().cpu().numpy()
+#     pred = np.zeros_like(outputs_np)
+#     pred[outputs_np >= 0.5] = 1
+#     pred[outputs_np < 0.5] = 0
+#     # correct = torch.sum(torch.eq(pred, labels)).item()
+#     return f1_score(pred, label_np)
