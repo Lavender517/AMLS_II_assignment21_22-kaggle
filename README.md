@@ -79,7 +79,7 @@ The dataset is provided by Kaggle[1], which includes a training set and a test s
 ```
 models
 ```
-This folder saves the trained model with better performance, but for BERT folder, as its file size is too big, it fails to be uploaded on Github.
+This folder saves the trained model with better performance such as CNN Acc more than 79 and Bi-LSTM Acc more than 78. But for BERT folder, as its file size is too big, it fails to be uploaded on Github. Besides, the word2vec obtained by word2vec.py file is also saved at here.
 ```
 output
 ```
