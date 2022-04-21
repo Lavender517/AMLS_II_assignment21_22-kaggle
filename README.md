@@ -5,8 +5,7 @@ SN: 21056542
 ```
 
 The ubiquity of smartphones allows people to announce any emergencies they identify in real-time. A large percentage of them choose to broadcast by sending tweets, so classifying
-suspicious tweets for disaster content is a topic that has been gaining steam in recent years. In this report, we focus on the Kaggle competition Natural Language Processing with Disaster Tweets, whose objective is to distinguish the real
-disaster tweets from others. An attempt is made to acquire the word embedding vectors by applying word2vec structure, the vectors are then classified into two labels using Bi-LSTM, TextCNN and fine-tuned BERT models, as well as displaying their performance. The prediction results are evaluated and compared to provide references on the suitability of classification with the selected superior approach.
+suspicious tweets for disaster content is a topic that has been gaining steam in recent years. In this report, we focus on the Kaggle competition *Natural Language Processing with Disaster Tweets*, whose objective is to distinguish the real disaster tweets from others. An attempt is made to acquire the word embedding vectors by applying word2vec structure, the vectors are then classified into two labels using **Bi-LSTM**, **TextCNN** and **fine-tuned BERT** models, as well as displaying their performance. The prediction results are evaluated and compared to provide references on the suitability of classification with the selected superior approach.
 
 
 ## Environments
@@ -52,7 +51,7 @@ AMLS_II_assignment21_22-kaggle
 ```
 main.py
 ```
-This file implements the whole process of this report, includes training command to choose specific model from deep learning approaches and produces the test results on the dataset.
+This file implements the whole process of this report, including word embedding process, contructing BertTokenizer and fine-tuned BERT model, training commands to choose specific model from deep learning approaches and produces the test results on the dataset.
 ```
 data_load.py
 ```
