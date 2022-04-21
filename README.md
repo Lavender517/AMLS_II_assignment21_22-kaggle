@@ -51,7 +51,7 @@ AMLS_II_assignment21_22-kaggle
 ```
 main.py
 ```
-This file implements the whole process of this report, including word embedding process, contructing BertTokenizer and fine-tuned BERT model, training commands to choose specific model from deep learning approaches and produces the test results on the dataset.
+This file implements the whole process of this report, including word embedding process, contructing BertTokenizer and fine-tuned BERT model, training commands to choose specific model from deep learning approaches and produces the test results on the dataset. You can choose to run the training process or prediction process by commenting one of the other in main function.
 ```
 data_load.py
 ```
